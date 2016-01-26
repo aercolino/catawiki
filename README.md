@@ -1,7 +1,8 @@
 
-Commands:
-    $ npm init
-    $ npm install mocha --save-dev
+For running:
+    $ npm install
+    $ cd src
+    $ node index.js
 
 
 ---
