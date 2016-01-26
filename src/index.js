@@ -48,8 +48,22 @@ function compute(input) {
 
 
 
-function validateSpacedIntegers(line) {
-    var result = line.search(/^(?:(?:\d+\s*)*|\d+)$/g);
+function validateGrid(line) {
+    var result = line.search(/^\d+\s+\d+$/g);
+    return result !== -1;
+}
+
+
+
+function validateStartingPosition(line) {
+    var result = line.search(/^\d+\s+\d+\s+[NEWS]$/g);
+    return result !== -1;
+}
+
+
+
+function validateMovements(line) {
+    var result = line.search(/^[LRM]+$/g);
     return result !== -1;
 }
 
@@ -59,13 +73,32 @@ function config(input) {
     if (input.length % 2 === 0) {
         throw Error('Expected an odd number of lines.');
     }
-    if (! validateSpacedIntegers(input[0])) {
-        throw Error('Expected only spaced integers on the first line.');
-    }
-    var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
-    if (! xyMax.length === 2) {
+
+    if (! validateGrid(input[0])) {
         throw Error('Expected only two spaced integers on the first line.');
     }
+    var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
+    input.shift(); // drop first line
+
+    var inputRovers = _.chunk(input, 2);
+    var rovers = _.map(inputRovers, function (inputRover, index) {
+        var result = {
+            start: inputRover[0],
+            movements: inputRover[1]
+        };
+
+        if (! validateStartingPosition(result.start)) {
+            throw Error('Expected only two spaced integers followed by a NEWS letter on the line ' + (2 * index + 1) + '.');
+        }
+
+        if (! validateMovements(result.movements)) {
+            throw Error('Expected only LRM letters on the line ' + (2 * index + 2) + '.');
+        }
+
+        return result;
+    });
+
+
 
     var result = {
         'Xmax': xyMax[0],
