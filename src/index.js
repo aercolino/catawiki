@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var input = [];
+const faces = 'NESW';
 
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
@@ -17,7 +18,9 @@ rl.on('line', function (line) {
             console.log('Result: ');
             try {
                 var result = compute(input);
-                console.log(result);
+                _.forEach(result, function (rover) {
+                    console.log([rover.x, rover.y, faces[rover.facing]].join(' '));
+                });
             }
             catch (e) {
                 console.log(e.stack || e);
@@ -49,7 +52,6 @@ function validatePosition(rover, config) {
 
 
 function compute(input) {
-    var faces = 'NESW';
     var config = parse_config(input);
 
     var result = [];
@@ -100,9 +102,6 @@ function compute(input) {
         result.push(rover);
     });
 
-    _.forEach(result, function (rover) {
-        console.log(rover.x, rover.y, faces[rover.facing]);
-    });
     return result;
 }
 
