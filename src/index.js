@@ -1,6 +1,7 @@
 'use strict';
 
 const readline = require('readline');
-const cli = require('./cli');
+const rli = readline.createInterface(process.stdin, process.stdout);
 
-cli(readline);
+const cli = require('./cli');
+cli(rli);

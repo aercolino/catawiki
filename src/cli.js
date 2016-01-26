@@ -3,16 +3,14 @@
 const Rover = require('./rover-factory');
 const _ = require('lodash');
 
-module.exports = function (readline) {
+module.exports = function (rli) {
     var config = {faces: 'NESW'};
     var input = [];
 
-    const rl = readline.createInterface(process.stdin, process.stdout);
+    rli.setPrompt('CataWiki> ');
+    rli.prompt();
 
-    rl.setPrompt('CataWiki> ');
-    rl.prompt();
-
-    rl.on('line', function (line) {
+    rli.on('line', function (line) {
         line = line.trim();
         switch (line) {
 
@@ -35,7 +33,7 @@ module.exports = function (readline) {
                 break;
 
         }
-        rl.prompt();
+        rli.prompt();
     }).on('close', () => {
         console.log('Have a great day!');
         process.exit(0);
