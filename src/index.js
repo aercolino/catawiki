@@ -15,8 +15,13 @@ rl.on('line', function (line) {
 
         case '':
             console.log('Result: ');
-            var result = compute(input);
-            console.log(result);
+            try {
+                var result = compute(input);
+                console.log(result);
+            }
+            catch (e) {
+                console.log(e);
+            }
             input = [];
             break;
 
@@ -44,6 +49,10 @@ function compute(input) {
 
 
 function config(input) {
+    if (input.length % 2 === 0) {
+        throw Error('Expected an odd number of lines.');
+    }
+    validateSpacedNumbers(input[0])
     var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
 
     var result = {
