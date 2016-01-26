@@ -12,7 +12,8 @@
   "author": "Andrea Ercolino",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "readline-testharness": "^0.3.0"
   },
   "dependencies": {
     "lodash": "^4.0.1"
