@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var input = [];
 
 const readline = require('readline');
@@ -22,6 +23,7 @@ rl.on('line', function (line) {
         default:
             input.push(line);
             break;
+
     }
     rl.prompt();
 }).on('close', () => {
@@ -34,5 +36,20 @@ return;
 
 
 function compute(input) {
-    return input;
+    var result = input;
+    result = config(result);
+    return result;
 }
+
+
+
+function config(input) {
+    var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
+
+    var result = {
+        'Xmax': xyMax[0],
+        'Ymax': xyMax[1]
+    };
+    return result;
+}
+
