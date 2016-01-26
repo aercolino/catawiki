@@ -12,6 +12,6 @@
   "author": "Andrea Ercolino",
   "license": "ISC",
   "devDependencies": {
-    "intern": "^3.0.6"
+    "mocha": "^2.3.4"
   }
 }
