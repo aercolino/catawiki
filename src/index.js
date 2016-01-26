@@ -43,20 +43,21 @@ return;
 function compute(input) {
     var result = input;
     result = config(result);
+    result = JSON.stringify(result);
     return result;
 }
 
 
 
 function validateGrid(line) {
-    var result = line.search(/^\d+\s+\d+$/g);
+    var result = line.search(/^\d+ \d+$/g);
     return result !== -1;
 }
 
 
 
 function validateStartingPosition(line) {
-    var result = line.search(/^\d+\s+\d+\s+[NEWS]$/g);
+    var result = line.search(/^\d+ \d+ [NEWS]$/g);
     return result !== -1;
 }
 
@@ -88,12 +89,22 @@ function config(input) {
         };
 
         if (! validateStartingPosition(result.start)) {
-            throw Error('Expected only two spaced integers followed by a NEWS letter on the line ' + (2 * index + 1) + '.');
+            throw Error('Expected only two spaced integers followed by a NEWS letter on line ' + (2 * index + 1) + '.');
         }
 
         if (! validateMovements(result.movements)) {
-            throw Error('Expected only LRM letters on the line ' + (2 * index + 2) + '.');
+            throw Error('Expected only LRM letters on line ' + (2 * index + 2) + '.');
         }
+
+        var start = result.start.split(' ');
+        var result = {
+            start: {
+                x: start[0],
+                y: start[1],
+                facing: start[2],
+            },
+            movements: result.movements.split('')
+        };
 
         return result;
     });
@@ -102,7 +113,8 @@ function config(input) {
 
     var result = {
         'Xmax': xyMax[0],
-        'Ymax': xyMax[1]
+        'Ymax': xyMax[1],
+        'rovers': rovers
     };
     return result;
 }
