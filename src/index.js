@@ -167,8 +167,6 @@ function parse_config(input) {
         return result;
     });
 
-    // TODO validate that rovers start inside the grid...
-
     var result = {
         'xMax': xyMax[0],
         'yMax': xyMax[1],

@@ -4,6 +4,8 @@ For running:
     $ cd src
     $ node index.js
 
+Mark the end of the input with an empty line.
+
 
 ---
 # Problem Objective
