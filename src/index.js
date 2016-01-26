@@ -20,7 +20,7 @@ rl.on('line', function (line) {
                 console.log(result);
             }
             catch (e) {
-                console.log(e);
+                console.log(e.stack || e);
             }
             input = [];
             break;
