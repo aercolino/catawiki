@@ -129,27 +129,6 @@ function compute(input) {
 
 
 
-function validateGrid(line) {
-    var result = line.search(/^\d+ \d+$/g);
-    return result !== -1;
-}
-
-
-
-function validateStartingPosition(line) {
-    var result = line.search(/^\d+ \d+ [NEWS]$/g);
-    return result !== -1;
-}
-
-
-
-function validateMovements(line) {
-    var result = line.search(/^[LRM]+$/g);
-    return result !== -1;
-}
-
-
-
 function parse_config(input) {
     if (input.length % 2 === 0) {
         throw Error('Expected an odd number of lines.');
@@ -194,6 +173,28 @@ function parse_config(input) {
         'yMax': xyMax[1],
         'rovers': rovers
     };
+    
     return result;
+
+
+
+    function validateGrid(line) {
+        var result = line.search(/^\d+ \d+$/g);
+        return result !== -1;
+    }
+
+
+
+    function validateStartingPosition(line) {
+        var result = line.search(/^\d+ \d+ [NEWS]$/g);
+        return result !== -1;
+    }
+
+
+
+    function validateMovements(line) {
+        var result = line.search(/^[LRM]+$/g);
+        return result !== -1;
+    }
 }
 
