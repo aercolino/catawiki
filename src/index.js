@@ -40,10 +40,69 @@ return;
 
 
 
+function validatePosition(rover, config) {
+    var result = true && 
+        0 <= rover.x && rover.x <= config.xMax &&
+        0 <= rover.y && rover.y <= config.yMax;
+    return result;
+}
+
+
 function compute(input) {
-    var result = input;
-    result = config(result);
-    result = JSON.stringify(result);
+    var faces = 'NESW';
+    var config = parse_config(input);
+
+    var result = [];
+    _.forEach(config.rovers, function (rover, index) {
+        rover.x = rover.start.x;
+        rover.y = rover.start.y;
+        rover.facing = faces.search(rover.start.facing);
+        if (! validatePosition(rover, config)) {
+            // TODO improve message with rover number based on index
+            throw Error('Expected the position of all rovers to start into the grid.'); 
+        }
+        _.forEach(rover.movements, function (move) {
+            switch (move) {
+                case 'L':
+                    rover.facing = (4 + rover.facing - 1) % 4;
+                    break;
+                case 'R':
+                    rover.facing = (4 + rover.facing + 1) % 4;
+                    break;
+                case 'M':
+                    switch (faces[rover.facing]) {
+                        case 'N':
+                            rover.y += 1;
+                            break;
+                        case 'E':
+                            rover.x += 1;
+                            break;
+                        case 'W':
+                            rover.x -= 1;
+                            break;
+                        case 'S':
+                            rover.y -= 1;
+                            break;
+                        default:
+                            throw Error('Oops, this shoud never happen...');
+                            break;
+                    }
+                    if (! validatePosition(rover, config)) {
+                        // TODO improve message with rover number based on index
+                        throw Error('Expected the position of all rovers to move into the grid.'); 
+                    }
+                    break;
+                default:
+                    throw Error('Oops, this shoud never happen...');
+                    break;
+            }
+        });
+        result.push(rover);
+    });
+
+    _.forEach(result, function (rover) {
+        console.log(rover.x, rover.y, faces[rover.facing]);
+    });
     return result;
 }
 
@@ -70,7 +129,7 @@ function validateMovements(line) {
 
 
 
-function config(input) {
+function parse_config(input) {
     if (input.length % 2 === 0) {
         throw Error('Expected an odd number of lines.');
     }
@@ -99,8 +158,8 @@ function config(input) {
         var start = result.start.split(' ');
         var result = {
             start: {
-                x: start[0],
-                y: start[1],
+                x: parseInt(start[0], 10),
+                y: parseInt(start[1], 10),
                 facing: start[2],
             },
             movements: result.movements.split('')
@@ -109,11 +168,11 @@ function config(input) {
         return result;
     });
 
-
+    // TODO validate that rovers start inside the grid...
 
     var result = {
-        'Xmax': xyMax[0],
-        'Ymax': xyMax[1],
+        'xMax': xyMax[0],
+        'yMax': xyMax[1],
         'rovers': rovers
     };
     return result;
