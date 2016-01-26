@@ -1,7 +1,9 @@
 'use strict';
 
 var _ = require('lodash');
+
 var input = [];
+var config = {};
 const faces = 'NESW';
 
 const readline = require('readline');
@@ -18,8 +20,8 @@ rl.on('line', function (line) {
             console.log('Result: ');
             try {
                 var result = compute(input);
-                _.forEach(result, function (rover) {
-                    console.log([rover.x, rover.y, faces[rover.facing]].join(' '));
+                _.forEach(result, function (theRover) {
+                    console.log([theRover.x, theRover.y, faces[theRover.facing]].join(' '));
                 });
             }
             catch (e) {
@@ -43,63 +45,83 @@ return;
 
 
 
-function validatePosition(rover, config) {
-    var result = true && 
-        0 <= rover.x && rover.x <= config.xMax &&
-        0 <= rover.y && rover.y <= config.yMax;
-    return result;
+function Rover(start) {
+    var self = {
+        x: start.x || 0,
+        y: start.y || 0,
+        facing: start.facing || 0,
+        move: move
+    };
+
+    self.x = start.x;
+    self.y = start.y;
+    self.facing = faces.search(start.facing);
+    if (! validatePosition(self, config)) {
+        // TODO improve message with rover number
+        throw Error('Expected the position of all rovers to start into the grid.'); 
+    }
+
+    return self;
+
+
+
+    function move(movement) {
+        switch (movement) {
+            case 'L':
+                self.facing = (4 + self.facing - 1) % 4;
+                break;
+            case 'R':
+                self.facing = (4 + self.facing + 1) % 4;
+                break;
+            case 'M':
+                switch (faces[self.facing]) {
+                    case 'N':
+                        self.y += 1;
+                        break;
+                    case 'E':
+                        self.x += 1;
+                        break;
+                    case 'W':
+                        self.x -= 1;
+                        break;
+                    case 'S':
+                        self.y -= 1;
+                        break;
+                    default:
+                        throw Error('Oops, this shoud never happen...');
+                        break;
+                }
+                if (! validatePosition(self, config)) {
+                    // TODO improve message with rover number based on index
+                    throw Error('Expected the position of all rovers to move into the grid.'); 
+                }
+                break;
+            default:
+                throw Error('Oops, this shoud never happen...');
+                break;
+        }
+    }
+
+
+
+    function validatePosition(rover, config) {
+        var result = true && 
+            0 <= rover.x && rover.x <= config.xMax &&
+            0 <= rover.y && rover.y <= config.yMax;
+        return result;
+    }
 }
 
 
+
 function compute(input) {
-    var config = parse_config(input);
+    config = parse_config(input);
 
     var result = [];
     _.forEach(config.rovers, function (rover, index) {
-        rover.x = rover.start.x;
-        rover.y = rover.start.y;
-        rover.facing = faces.search(rover.start.facing);
-        if (! validatePosition(rover, config)) {
-            // TODO improve message with rover number based on index
-            throw Error('Expected the position of all rovers to start into the grid.'); 
-        }
-        _.forEach(rover.movements, function (move) {
-            switch (move) {
-                case 'L':
-                    rover.facing = (4 + rover.facing - 1) % 4;
-                    break;
-                case 'R':
-                    rover.facing = (4 + rover.facing + 1) % 4;
-                    break;
-                case 'M':
-                    switch (faces[rover.facing]) {
-                        case 'N':
-                            rover.y += 1;
-                            break;
-                        case 'E':
-                            rover.x += 1;
-                            break;
-                        case 'W':
-                            rover.x -= 1;
-                            break;
-                        case 'S':
-                            rover.y -= 1;
-                            break;
-                        default:
-                            throw Error('Oops, this shoud never happen...');
-                            break;
-                    }
-                    if (! validatePosition(rover, config)) {
-                        // TODO improve message with rover number based on index
-                        throw Error('Expected the position of all rovers to move into the grid.'); 
-                    }
-                    break;
-                default:
-                    throw Error('Oops, this shoud never happen...');
-                    break;
-            }
-        });
-        result.push(rover);
+        var theRover = Rover(rover.start);
+        _.forEach(rover.movements, theRover.move);
+        result.push(theRover);
     });
 
     return result;
