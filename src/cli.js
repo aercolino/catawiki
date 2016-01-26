@@ -17,7 +17,6 @@ module.exports = function (readline) {
         switch (line) {
 
             case '':
-                console.log('Result: ');
                 try {
                     var entries = parse_input();
                     var rovers = compute(entries);
