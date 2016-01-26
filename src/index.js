@@ -48,12 +48,24 @@ function compute(input) {
 
 
 
+function validateSpacedIntegers(line) {
+    var result = line.search(/^(?:(?:\d+\s*)*|\d+)$/g);
+    return result !== -1;
+}
+
+
+
 function config(input) {
     if (input.length % 2 === 0) {
         throw Error('Expected an odd number of lines.');
     }
-    validateSpacedNumbers(input[0])
+    if (! validateSpacedIntegers(input[0])) {
+        throw Error('Expected only spaced integers on the first line.');
+    }
     var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
+    if (! xyMax.length === 2) {
+        throw Error('Expected only two spaced integers on the first line.');
+    }
 
     var result = {
         'Xmax': xyMax[0],
