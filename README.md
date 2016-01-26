@@ -26,7 +26,7 @@ Each rover will be finished sequentially, which means that the second rover won'
 The output for each rover should be its final co-ordinates and heading.
 
 
-# INPUT AND OUTPUT
+# INPUT AND OUTPUT
 
 ## Test Input:
     5 5
@@ -38,11 +38,4 @@ The output for each rover should be its final co-ordinates and heading.
 ## Expected Output:
     1 3 N
     5 1 E
-
-
 ---
-
-# Reasoning
-
-- I have run the example by hand and it works, i.e. the output is coherent with the input.
-
