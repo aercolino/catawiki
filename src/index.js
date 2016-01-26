@@ -3,8 +3,8 @@
 var _ = require('lodash');
 
 var input = [];
-var config = {};
-const faces = 'NESW';
+var config = {faces: 'NESW'};
+var Rover = require('./rover-factory');
 
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
@@ -19,9 +19,10 @@ rl.on('line', function (line) {
         case '':
             console.log('Result: ');
             try {
-                var result = compute(input);
-                _.forEach(result, function (theRover) {
-                    console.log([theRover.x, theRover.y, faces[theRover.facing]].join(' '));
+                var entries = parse_input();
+                var rovers = compute(entries);
+                _.forEach(rovers, function (rover) {
+                    console.log(rover.toString());
                 });
             }
             catch (e) {
@@ -45,83 +46,11 @@ return;
 
 
 
-function Rover(start) {
-    var self = {
-        x: start.x || 0,
-        y: start.y || 0,
-        facing: start.facing || 0,
-        move: move
-    };
-
-    self.x = start.x;
-    self.y = start.y;
-    self.facing = faces.search(start.facing);
-    if (! validatePosition(self, config)) {
-        // TODO improve message with rover number
-        throw Error('Expected the position of all rovers to start into the grid.'); 
-    }
-
-    return self;
-
-
-
-    function move(movement) {
-        switch (movement) {
-            case 'L':
-                self.facing = (4 + self.facing - 1) % 4;
-                break;
-            case 'R':
-                self.facing = (4 + self.facing + 1) % 4;
-                break;
-            case 'M':
-                switch (faces[self.facing]) {
-                    case 'N':
-                        self.y += 1;
-                        break;
-                    case 'E':
-                        self.x += 1;
-                        break;
-                    case 'W':
-                        self.x -= 1;
-                        break;
-                    case 'S':
-                        self.y -= 1;
-                        break;
-                    default:
-                        throw Error('Oops, this shoud never happen...');
-                        break;
-                }
-                if (! validatePosition(self, config)) {
-                    // TODO improve message with rover number based on index
-                    throw Error('Expected the position of all rovers to move into the grid.'); 
-                }
-                break;
-            default:
-                throw Error('Oops, this shoud never happen...');
-                break;
-        }
-    }
-
-
-
-    function validatePosition(rover, config) {
-        var result = true && 
-            0 <= rover.x && rover.x <= config.xMax &&
-            0 <= rover.y && rover.y <= config.yMax;
-        return result;
-    }
-}
-
-
-
-function compute(input) {
-    config = parse_config(input);
-
+function compute(entries) {
     var result = [];
-    _.forEach(config.rovers, function (rover, index) {
-        var theRover = Rover(rover.start);
-        _.forEach(rover.movements, theRover.move);
-        result.push(theRover);
+    _.forEach(entries, function (entry) {
+        _.forEach(entry.movements, entry.rover.move);
+        result.push(entry.rover);
     });
 
     return result;
@@ -129,7 +58,7 @@ function compute(input) {
 
 
 
-function parse_config(input) {
+function parse_input() {
     if (input.length % 2 === 0) {
         throw Error('Expected an odd number of lines.');
     }
@@ -138,42 +67,40 @@ function parse_config(input) {
         throw Error('Expected only two spaced integers on the first line.');
     }
     var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
+    config.xMax = xyMax[0];
+    config.yMax = xyMax[1];
     input.shift(); // drop first line
 
-    var inputRovers = _.chunk(input, 2);
-    var rovers = _.map(inputRovers, function (inputRover, index) {
-        var result = {
-            start: inputRover[0],
-            movements: inputRover[1]
-        };
+    var lineEntries = _.chunk(input, 2);
+    var result = _.map(lineEntries, function (lineEntry, index) {
 
-        if (! validateStartingPosition(result.start)) {
-            throw Error('Expected only two spaced integers followed by a NEWS letter on line ' + (2 * index + 1) + '.');
+        var line = 2 * index + 1;
+
+        var start = lineEntry[0];
+        if (! validateStartingPosition(start)) {
+            throw Error('Expected only two spaced integers followed by a NEWS letter on line ' + (line) + '.');
         }
-
-        if (! validateMovements(result.movements)) {
-            throw Error('Expected only LRM letters on line ' + (2 * index + 2) + '.');
+        start = start.split(' ');
+        
+        var movements = lineEntry[1];
+        if (! validateMovements(movements)) {
+            throw Error('Expected only LRM letters on line ' + (line + 1) + '.');
         }
+        movements = movements.split('');
 
-        var start = result.start.split(' ');
         var result = {
-            start: {
+            line: line,
+            rover: Rover({
                 x: parseInt(start[0], 10),
                 y: parseInt(start[1], 10),
-                facing: start[2],
-            },
-            movements: result.movements.split('')
+                facing: start[2]
+            }, config, line),
+            movements: movements
         };
 
         return result;
     });
 
-    var result = {
-        'xMax': xyMax[0],
-        'yMax': xyMax[1],
-        'rovers': rovers
-    };
-    
     return result;
 
 
