@@ -149,6 +149,53 @@ describe('Rover Factory', function() {
 
         });
 
+
+        describe('should throw an exception when moving outside the grid', function() {
+
+            it('should not go over the yMax', function() {
+
+                function bubble_exception() {
+                    var rover = Rover({x: 5, y: 5, facing: 'N'}, {xMax: 5, yMax:5, faces: 'NESW'}, 3);
+                    rover.move('M');
+                }
+                assert.throws(bubble_exception, 'Error');
+
+            });
+
+            it('should not go below the yMin', function() {
+
+                function bubble_exception() {
+                    var rover = Rover({x: 0, y: 0, facing: 'S'}, {xMax: 5, yMax:5, faces: 'NESW'}, 3);
+                    rover.move('M');
+                }
+                assert.throws(bubble_exception, 'Error');
+
+            });
+
+            it('should not go after the xMax', function() {
+
+                function bubble_exception() {
+                    var rover = Rover({x: 5, y: 5, facing: 'E'}, {xMax: 5, yMax:5, faces: 'NESW'}, 3);
+                    rover.move('M');
+                }
+                assert.throws(bubble_exception, 'Error');
+
+            });
+
+            it('should not go before the xMin', function() {
+
+                function bubble_exception() {
+                    var rover = Rover({x: 0, y: 0, facing: 'W'}, {xMax: 5, yMax:5, faces: 'NESW'}, 3);
+                    rover.move('M');
+                }
+                assert.throws(bubble_exception, 'Error');
+
+            });
+
+            
+        });
+
+
     });
 
 });
