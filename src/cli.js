@@ -56,42 +56,18 @@ module.exports = function (rli) {
 
 
     function parse_input() {
-        if (input.length % 2 === 0) {
-            throw Error('Expected an odd number of lines.');
+        if (! (input.length >= 3 && input.length % 2 === 1)) {
+            throw Error('Expected an odd number of lines (min 3).');
         }
 
-        if (! validateGrid(input[0])) {
-            throw Error('Expected only two spaced integers on the first line.');
-        }
-        var xyMax = _.map(_.compact(input[0].split(' ')), function(n) { return parseInt(n, 10); });
-        config.xMax = xyMax[0];
-        config.yMax = xyMax[1];
-        input.shift(); // drop first line
-
-        var lineEntries = _.chunk(input, 2);
+        setGrid(input[0]);
+        var lineEntries = _.chunk(_.drop(input), 2);
         var result = _.map(lineEntries, function (lineEntry, index) {
-
-            var line = 2 * index + 1;
-
-            var start = lineEntry[0];
-            if (! validateStartingPosition(start)) {
-                throw Error('Expected only two spaced integers followed by a NEWS letter on line ' + (line) + '.');
-            }
-            start = start.split(' ');
-            
-            var movements = lineEntry[1];
-            if (! validateMovements(movements)) {
-                throw Error('Expected only LRM letters on line ' + (line + 1) + '.');
-            }
-            movements = movements.split('');
-
+            var line_number = 2 * index + 1;
+            var start = getStartingPosition(lineEntry[0], line_number);
+            var movements = getMovements(lineEntry[1], line_number + 1);
             var result = {
-                line: line,
-                rover: Rover({
-                    x: parseInt(start[0], 10),
-                    y: parseInt(start[1], 10),
-                    facing: start[2]
-                }, config, line),
+                rover: Rover(start, config, line_number),
                 movements: movements
             };
 
@@ -99,6 +75,42 @@ module.exports = function (rli) {
         });
 
         return result;
+
+
+
+        function setGrid(line) {
+            if (! validateGrid(line)) {
+                throw Error('Expected only two spaced integers on the first line.');
+            }
+            var xyMax = _.map(_.compact(line.split(' ')), function(n) { return parseInt(n, 10); });
+            config.xMax = xyMax[0];
+            config.yMax = xyMax[1];
+        }
+
+
+
+        function getStartingPosition(line, line_number) {
+            if (! validateStartingPosition(line)) {
+                throw Error('Expected only two spaced integers followed by a NEWS letter on line ' + line_number + '.');
+            }
+            var data = line.split(' ');
+            var result = {
+                x: parseInt(data[0], 10),
+                y: parseInt(data[1], 10),
+                facing: data[2]
+            };
+            return result;
+        }
+
+
+
+        function getMovements(line, line_number) {
+            if (! validateMovements(line)) {
+                throw Error('Expected only LRM letters on line ' + line_number + '.');
+            }
+            var result = line.split('');
+            return result;
+        }
 
 
 
