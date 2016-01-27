@@ -13,7 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.4.1",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "mock-utf8-stream": "^0.1.1"
   },
   "dependencies": {
     "lodash": "^4.0.1"

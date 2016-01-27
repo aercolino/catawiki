@@ -1,9 +1,12 @@
 'use strict';
 
-const Rover = require('./rover-factory');
 const _ = require('lodash');
+const readline = require('readline');
+const Rover = require('./rover-factory');
 
-module.exports = function (rli) {
+module.exports = function (context) {
+    const rli = readline.createInterface(context.stdin, context.stdout);
+
     var config = {faces: 'NESW'};
     var input = [];
 
@@ -36,10 +39,10 @@ module.exports = function (rli) {
         rli.prompt();
     }).on('close', () => {
         console.log('Have a great day!');
-        process.exit(0);
+        context.process.exit(0);
     });
 
-    return;
+    return rli;
 
 
 
