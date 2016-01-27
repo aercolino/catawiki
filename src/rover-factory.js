@@ -17,11 +17,8 @@ function RoverFactory(start, config, line) {
         toString: toString
     };
 
-    if (! validatePosition(self, config)) {
-        // TODO improve message with rover number
-        console.log(self);
-        console.log(config);
-        throw Error('Expected the position of all rovers to start into the grid. (problem on line ' + line + ')'); 
+    if (! validatePosition()) {
+        throw Error('Expected all rovers to start into the grid. (problem on line ' + line + ')'); 
     }
 
     return self;
@@ -30,33 +27,20 @@ function RoverFactory(start, config, line) {
 
     function move(movement) {
         switch (movement) {
-            case 'L':
-                self.facing = (4 + self.facing - 1) % 4;
-                break;
-            case 'R':
-                self.facing = (4 + self.facing + 1) % 4;
-                break;
+            case 'L': self.facing = (4 + self.facing - 1) % 4; break;
+            case 'R': self.facing = (4 + self.facing + 1) % 4; break;
             case 'M':
                 switch (config.faces[self.facing]) {
-                    case 'N':
-                        self.y += 1;
-                        break;
-                    case 'E':
-                        self.x += 1;
-                        break;
-                    case 'W':
-                        self.x -= 1;
-                        break;
-                    case 'S':
-                        self.y -= 1;
-                        break;
+                    case 'N': self.y += 1; break;
+                    case 'E': self.x += 1; break;
+                    case 'W': self.x -= 1; break;
+                    case 'S': self.y -= 1; break;
                     default:
                         throw Error('Oops, this shoud never happen...');
                         break;
                 }
-                if (! validatePosition(self, config)) {
-                    // TODO improve message with rover number
-                    throw Error('Expected the position of all rovers to start into the grid. (problem on line ' + (line + 1) + ')');  
+                if (! validatePosition()) {
+                    throw Error('Expected all rovers to move into the grid. (problem on line ' + (line + 1) + ')');  
                 }
                 break;
             default:
@@ -67,16 +51,17 @@ function RoverFactory(start, config, line) {
 
 
 
-    function validatePosition(rover, config) {
+    function validatePosition() {
         var result = true && 
-            0 <= rover.x && rover.x <= config.xMax &&
-            0 <= rover.y && rover.y <= config.yMax;
+            0 <= self.x && self.x <= config.xMax &&
+            0 <= self.y && self.y <= config.yMax;
         return result;
     }
 
 
 
     function toString() {
-        return [self.x, self.y, config.faces[self.facing]].join(' ');
+        var result = [self.x, self.y, config.faces[self.facing]].join(' ');
+        return result;
     }
 }
