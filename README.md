@@ -1,12 +1,19 @@
 
-For running:
+### Install
 
     $ npm install
-    $ cd src
-    $ node index.js
+
+
+### Run
+
+    $ node src/index
 
 Mark the end of the input with an empty line.
 
+
+### Test
+
+    $ mocha tests
 
 ---
 # Problem Objective
