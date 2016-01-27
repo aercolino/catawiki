@@ -1,15 +1,18 @@
-var assert = require('assert');
-var _ = require('lodash');
+var assert = require('chai').assert;
 var Rover = require('../src/rover-factory');
 
 var my = {
     config: {xMax: 5, yMax:5, faces: 'NESW'},
-    line_number: 3
+    lineNumber: 3,
+    messagePosition: '(problem on line 3)',
+    messageMovement: '(problem on line 4)'
 };
 
-describe('Rover Factory', function() {
+console.log(my);
 
-    describe('a rover is properly built', function() {
+describe('Rover Factory /', function() {
+
+    describe('a rover is properly built /', function() {
 
         it('should have the start position before any movement', function() {
 
@@ -24,7 +27,7 @@ describe('Rover Factory', function() {
             function bubble_exception() {
                 Rover({x: 6, y: 6, facing: 'N'}, my.config, my.lineNumber);
             }
-            assert.throws(bubble_exception, 'Error');
+            assert.throws(bubble_exception, my.messagePosition);
             
         });
 
@@ -162,9 +165,10 @@ describe('Rover Factory', function() {
                     var rover = Rover({x: 5, y: 5, facing: 'N'}, my.config, my.lineNumber);
                     rover.move('M');
                 }
-                assert.throws(bubble_exception, 'Error');
+                assert.throws(bubble_exception, my.messageMovement);
 
             });
+
 
             it('should not go below the yMin', function() {
 
@@ -172,9 +176,10 @@ describe('Rover Factory', function() {
                     var rover = Rover({x: 0, y: 0, facing: 'S'}, my.config, my.lineNumber);
                     rover.move('M');
                 }
-                assert.throws(bubble_exception, 'Error');
+                assert.throws(bubble_exception, my.messageMovement);
 
             });
+
 
             it('should not go after the xMax', function() {
 
@@ -182,9 +187,10 @@ describe('Rover Factory', function() {
                     var rover = Rover({x: 5, y: 5, facing: 'E'}, my.config, my.lineNumber);
                     rover.move('M');
                 }
-                assert.throws(bubble_exception, 'Error');
+                assert.throws(bubble_exception, my.messageMovement);
 
             });
+
 
             it('should not go before the xMin', function() {
 
@@ -192,7 +198,7 @@ describe('Rover Factory', function() {
                     var rover = Rover({x: 0, y: 0, facing: 'W'}, my.config, my.lineNumber);
                     rover.move('M');
                 }
-                assert.throws(bubble_exception, 'Error');
+                assert.throws(bubble_exception, my.messageMovement);
 
             });
 
